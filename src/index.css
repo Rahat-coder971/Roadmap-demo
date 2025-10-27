@@ -1,0 +1,250 @@
+/* src/index.css - Dark Theme */
+:root { /* ... unchanged color variables ... */
+  --bg-color: #1a1a2e; --card-bg-color: #2a2a3e; --text-color: #e0e0e0; --heading-color: #ffffff;
+  --primary-color: #4a90e2; --secondary-color: #7f5af0; --success-color: #00f5a0; --incomplete-color: #6c757d;
+  --border-color: #404058; --line-color: #505068; --note-bg-color: #3a3a4e; --note-text-color: #b0b0c0;
+  --danger-color: #ff6b6b; --danger-dark-color: #e03131;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6; font-weight: 400; color: var(--text-color); background-color: var(--bg-color);
+  font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+body { margin: 0; padding: 2rem; box-sizing: border-box; }
+.app-container { max-width: 900px; margin: 0 auto; padding: 1rem; }
+
+h1 { text-align: center; color: var(--heading-color); margin-bottom: 2rem; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+h2 { margin-top: 0; margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--heading-color); }
+h3 { color: var(--primary-color); margin: 0; font-weight: 600; }
+h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; padding-left: 0.5rem; }
+
+.card { background-color: var(--card-bg-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); margin-bottom: 1rem; }
+.loading, .error { text-align: center; font-size: 1.2rem; padding: 2rem; color: var(--text-color); }
+
+.controls.card { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
+.controls-left { display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; }
+.control-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.controls-right { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.controls label { font-weight: 500; margin-right: 0.5rem; color: var(--text-color); }
+.controls select, .controls button { padding: 0.6rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.95rem; margin-right: 0.5rem; background-color: var(--bg-color); color: var(--text-color); }
+.controls select option { background-color: var(--card-bg-color); color: var(--text-color); }
+.controls button { background-color: var(--primary-color); color: white; cursor: pointer; border-color: var(--primary-color); transition: background-color 0.2s ease; }
+.controls button:hover { background-color: color-mix(in srgb, var(--primary-color) 80%, black); }
+.role-switcher { padding: 0.5rem; background-color: color-mix(in srgb, var(--card-bg-color) 80%, black); border-radius: 6px; width: fit-content; margin-right: 0; display: flex; align-items: center;}
+.role-switcher span { font-size: 0.85rem; color: var(--note-text-color); margin-left: 0.75rem; }
+.overall-progress-label { font-size: 0.75rem; font-weight: 500; color: var(--note-text-color); text-transform: uppercase; margin-top: 4px; }
+
+/* Circular Progress Bar */
+.circular-progress-container { position: relative; display: flex; justify-content: center; align-items: center; font-weight: 700; color: var(--heading-color); text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); }
+.overall-progress-display .circular-progress-container { font-size: calc(80px * 0.22); }
+.circular-progress-svg { position: absolute; top: 0; left: 0; }
+.circular-progress-bg { fill: none; opacity: 0.7; }
+.circular-progress-fill { fill: none; transition: stroke-dashoffset 0.5s ease-in-out; }
+.circular-progress-text { z-index: 1; }
+
+/* --- Timeline --- */
+.roadmap-timeline { position: relative; margin-left: 30px; }
+.milestone { display: flex; position: relative; margin-bottom: 2rem; align-items: flex-start; transition: filter 0.3s ease, opacity 0.3s ease; } /* Added transition */
+
+/* --- *** NEW: Locked Milestone Styling *** --- */
+.milestone.locked {
+    filter: blur(2px) grayscale(50%); /* Blur and desaturate */
+    opacity: 0.6;
+    pointer-events: none; /* Disable interactions */
+}
+.milestone.locked .milestone-details {
+    background-color: color-mix(in srgb, var(--card-bg-color) 70%, black); /* Darken card */
+}
+/* --- *** END NEW *** --- */
+
+.milestone-marker-container { position: absolute; left: -45px; top: 0; display: flex; flex-direction: column; align-items: center; height: calc(100% + 2rem); }
+.milestone-marker { width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color); border: 3px solid var(--bg-color); box-shadow: 0 0 0 3px var(--primary-color); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: white; z-index: 1; transition: background-color 0.5s ease, box-shadow 0.5s ease; }
+.milestone-marker.complete { background-color: var(--success-color); box-shadow: 0 0 0 3px var(--success-color); color: #1a1a2e; }
+/* Marker when locked */
+.milestone.locked .milestone-marker { background-color: var(--incomplete-color); box-shadow: 0 0 0 3px var(--incomplete-color); }
+
+.milestone-line { width: 3px; background-color: var(--line-color); flex-grow: 1; margin-top: 5px; transition: background-color 0.5s ease; }
+.roadmap-timeline > .milestone:last-of-type .milestone-line { flex-grow: 0; height: 20px; }
+.end-marker { position: absolute; bottom: -2rem; left: -45px; }
+.end-marker .milestone-marker { background-color: var(--incomplete-color); box-shadow: 0 0 0 3px var(--incomplete-color); }
+.milestone-details { margin-left: 20px; flex-grow: 1; padding-top: 0.5rem; background-color: var(--card-bg-color); }
+.milestone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+.milestone-progress { width: 150px; margin-left: 1rem; }
+
+/* --- Topic --- */
+.topic-container { margin-bottom: 1rem; border-left: 3px solid var(--line-color); padding-left: 1rem; position: relative; transition: opacity 0.3s ease; }
+/* --- *** NEW: Locked Topic Styling *** --- */
+.topic-container.locked { opacity: 0.6; }
+.topic-container.locked .topic-header { cursor: not-allowed; }
+.topic-container.locked h4 { color: var(--note-text-color); } /* Fade title */
+/* --- *** END NEW *** --- */
+
+.topic-header { display: flex; align-items: center; cursor: pointer; margin-bottom: 0.5rem; padding: 0.25rem 0; }
+.collapse-icon { color: var(--note-text-color); font-size: 0.9rem; transition: transform 0.2s ease-in-out; }
+.topic-header:hover .collapse-icon, .topic-header:hover h4 { color: var(--primary-color); }
+/* Don't change color on hover if locked */
+.topic-container.locked .topic-header:hover .collapse-icon,
+.topic-container.locked .topic-header:hover h4 { color: initial; }
+
+.topic-progress { width: 100px; margin-left: auto; }
+
+/* --- Task List --- */
+.task-list { list-style: none; padding-left: 10px; margin-top: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+
+/* --- Task Item --- */
+.task-item { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.5rem; opacity: 0.8; transition: background-color 0.3s ease, opacity 0.3s ease, text-decoration 0.3s ease; position: relative; }
+.task-item:last-child { border-bottom: none; }
+.task-item:not(.completed) { opacity: 1; }
+.task-item.completed { opacity: 0.7; }
+/* --- *** NEW: Locked Task Styling *** --- */
+.task-item.locked { opacity: 0.5; }
+.task-item.locked .task-description { color: var(--note-text-color); }
+.task-item.locked .task-status-icon,
+.task-item.locked .task-actions,
+.task-item.locked .mentor-notes {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.task-item.locked .task-status-icon:hover { transform: none; } /* Disable hover effect */
+.task-item.locked .icon-btn:hover { color: var(--note-text-color); } /* Disable hover color */
+
+/* --- *** END NEW *** --- */
+
+.task-content { display: flex; align-items: center; gap: 0.75rem; }
+.task-status-icon { font-size: 1.4rem; cursor: pointer; user-select: none; transition: transform 0.2s ease, color 0.3s ease; display: flex; align-items: center; }
+.task-status-icon.disabled { cursor: not-allowed; } /* Style disabled icon */
+.task-status-icon:hover:not(.disabled) { transform: scale(1.15); } /* Only scale if not disabled */
+.icon-complete { color: var(--success-color); }
+.icon-incomplete { color: var(--incomplete-color); }
+.task-description { flex-grow: 1; color: var(--text-color); transition: color 0.3s ease, text-decoration 0.3s ease; }
+.task-item.completed .task-description { text-decoration: line-through solid var(--note-text-color) 1px; color: var(--note-text-color); }
+.task-actions { margin-left: auto; display: flex; align-items: center; gap: 0.25rem; }
+.task-actions.disabled { pointer-events: none; } /* Disable buttons if actions disabled */
+.icon-btn { background: none; border: none; color: var(--note-text-color); cursor: pointer; font-size: 1rem; padding: 3px; display: inline-flex; align-items: center; transition: color 0.2s ease; }
+.icon-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+.icon-btn:hover:not(:disabled) { color: var(--primary-color); }
+.save-btn, .save-notes-btn { color: var(--success-color); }
+.save-btn:hover:not(:disabled), .save-notes-btn:hover:not(:disabled) { color: color-mix(in srgb, var(--success-color) 80%, white); }
+.cancel-notes-btn { color: var(--danger-color); }
+.cancel-notes-btn:hover:not(:disabled) { color: var(--danger-dark-color); }
+.delete-btn { color: var(--danger-color); font-size: 0.9rem; }
+.delete-btn:hover:not(:disabled) { color: var(--danger-dark-color); }
+.task-edit-input { flex-grow: 1; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.95rem; background-color: var(--bg-color); color: var(--text-color); }
+.task-edit-input:disabled { background-color: var(--card-bg-color); opacity: 0.5; }
+
+/* Mentor Notes */
+.mentor-notes { margin-left: calc(1.4rem + 0.75rem); margin-top: 5px; font-size: 0.9rem; color: var(--note-text-color); background-color: var(--note-bg-color); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); }
+.mentor-notes.disabled { opacity: 0.5; pointer-events: none; }
+.notes-display { display: flex; align-items: center; gap: 0.5rem; }
+.notes-text { margin: 0; flex-grow: 1; display: flex; align-items: center; gap: 0.3rem; }
+.notes-text em { color: var(--secondary-color); font-style: normal; font-weight: 500; }
+.notes-icon { color: var(--secondary-color); font-size: 0.9em; }
+.notes-edit-input { width: 100%; padding: 6px 10px; border: 1px dashed var(--border-color); border-radius: 4px; font-size: 0.9rem; margin-bottom: 5px; box-sizing: border-box; display: block; background-color: var(--bg-color); color: var(--text-color); }
+.notes-edit-input:disabled { background-color: var(--card-bg-color); opacity: 0.5; }
+.edit-notes-btn { padding: 0; text-decoration: none; margin-left: auto; display: inline-flex; align-items: center; gap: 0.2rem; color: var(--secondary-color); }
+.edit-notes-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+.edit-notes-btn:hover:not(:disabled) { color: color-mix(in srgb, var(--secondary-color) 80%, white); }
+
+.milestone-line.line-complete { background-color: var(--success-color); }
+
+/* Horizontal Progress Bar */
+.progress-bar-container { height: 12px; background-color: color-mix(in srgb, var(--line-color) 50%, transparent); border-radius: 6px; overflow: hidden; position: relative; border: 1px solid var(--border-color); }
+.progress-bar-fill { height: 100%; background-color: var(--primary-color); border-radius: 6px; transition: width 0.4s ease-in-out, background-color 0.4s ease-in-out; }
+.milestone-marker.complete ~ .milestone-details .milestone-progress .progress-bar-fill,
+.topic-container .progress-bar-fill[style*="width: 100%"] { background-color: var(--success-color); }
+.progress-bar-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.65rem; font-weight: 700; color: #ffffff; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6); user-select: none; }
+
+/* Add Item Button */
+.add-item-btn { display: flex; align-items: center; gap: 0.4rem; background-color: transparent; color: var(--secondary-color); border: 1px dashed var(--secondary-color); padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 0.75rem; margin-left: 10px; transition: background-color 0.2s ease, color 0.2s ease; }
+.add-item-btn:hover { background-color: var(--secondary-color); color: white; }
+.add-item-btn svg { font-size: 0.9em; }
+
+/* Milestone Actions & Schedule Button */
+.milestone-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: right; }
+.schedule-test-btn { background-color: var(--success-color); color: var(--bg-color); border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+.schedule-test-btn:hover { background-color: color-mix(in srgb, var(--success-color) 85%, black); transform: translateY(-1px); }
+.schedule-test-btn svg { font-size: 1em; }
+
+/* --- *** NEW: Mentor Score Input Styles *** --- */
+.mentor-score-input {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.mentor-score-input label {
+    font-weight: 500;
+    color: var(--note-text-color);
+    font-size: 0.9rem;
+}
+.mentor-score-input input[type="number"] {
+    width: 70px; /* Fixed width for score input */
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    text-align: center;
+}
+/* Hide number spinners */
+.mentor-score-input input[type=number]::-webkit-inner-spin-button,
+.mentor-score-input input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.mentor-score-input input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.save-score-btn {
+    /* Uses .icon-btn styles */
+}
+.saved-score {
+    font-size: 0.85rem;
+    color: var(--success-color);
+    margin-left: 0.5rem;
+    font-style: italic;
+}
+/* --- *** END NEW *** --- */
+
+
+/* --- Quiz Modal Styles --- */
+.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.quiz-modal { background-color: var(--card-bg-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+.quiz-modal h2, .quiz-modal h3 { color: var(--heading-color); margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+.quiz-question { margin-bottom: 1.5rem; }
+.quiz-question p strong { color: var(--primary-color); }
+.quiz-options { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+.quiz-option-label { display: block; padding: 0.5rem 0.75rem; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease; }
+.quiz-option-label:hover { background-color: color-mix(in srgb, var(--bg-color) 80%, white); }
+.quiz-option-label input[type="radio"] { margin-right: 0.5rem; accent-color: var(--primary-color); }
+.quiz-button { padding: 0.7rem 1.4rem; border-radius: 6px; border: none; font-size: 1rem; font-weight: 500; cursor: pointer; margin-top: 1.5rem; margin-right: 0.5rem; transition: background-color 0.2s ease, transform 0.1s ease; }
+.quiz-button.submit { background-color: var(--primary-color); color: white; }
+.quiz-button.submit:hover { background-color: color-mix(in srgb, var(--primary-color) 80%, black); transform: translateY(-1px); }
+.quiz-button.cancel, .quiz-modal .quiz-results button { background-color: var(--incomplete-color); color: white; }
+.quiz-button.cancel:hover, .quiz-modal .quiz-results button:hover { background-color: color-mix(in srgb, var(--incomplete-color) 80%, black); transform: translateY(-1px); }
+.quiz-results .score { font-size: 1.8rem; font-weight: 700; text-align: center; margin: 1rem 0; }
+.quiz-results .score.passed { color: var(--success-color); }
+.quiz-results .score.failed { color: var(--danger-color); }
+.quiz-results .result-message { text-align: center; font-weight: 500; margin-bottom: 2rem; }
+.quiz-results .result-message.passed { color: var(--success-color); }
+.quiz-results .result-message.failed { color: var(--danger-color); }
+
+/* --- *** NEW: Topic Locked Indicator *** --- */
+.topic-locked-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--incomplete-color);
+    margin-left: calc(1.4rem + 0.75rem); /* Align with notes */
+    margin-top: -0.25rem; /* Adjust vertical position */
+    font-style: italic;
+}
+.topic-locked-indicator svg {
+    font-size: 0.8em;
+}
+/* --- *** END NEW *** --- */
