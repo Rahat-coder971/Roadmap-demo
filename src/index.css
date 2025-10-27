@@ -4,21 +4,18 @@
   --primary-color: #4a90e2; --secondary-color: #7f5af0; --success-color: #00f5a0; --incomplete-color: #6c757d;
   --border-color: #404058; --line-color: #505068; --note-bg-color: #3a3a4e; --note-text-color: #b0b0c0;
   --danger-color: #ff6b6b; --danger-dark-color: #e03131;
-
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.6; font-weight: 400; color: var(--text-color); background-color: var(--bg-color);
-  font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 
-body { margin: 0; padding: 2rem; box-sizing: border-box; }
+body { margin: 0; padding: 2rem; box-sizing: border-box; background-color: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; font-weight: 400; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 .app-container { max-width: 900px; margin: 0 auto; padding: 1rem; }
 
 h1 { text-align: center; color: var(--heading-color); margin-bottom: 2rem; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
 h2 { margin-top: 0; margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--heading-color); }
 h3 { color: var(--primary-color); margin: 0; font-weight: 600; }
 h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; padding-left: 0.5rem; }
+h5 { /* Style for Resource heading */ color: var(--note-text-color); font-size: 0.9rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.card { background-color: var(--card-bg-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); margin-bottom: 1rem; }
+.card { background-color: var(--card-bg-color); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); margin-bottom: 1rem; position: relative; }
 .loading, .error { text-align: center; font-size: 1.2rem; padding: 2rem; color: var(--text-color); }
 
 .controls.card { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
@@ -42,27 +39,15 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 .circular-progress-fill { fill: none; transition: stroke-dashoffset 0.5s ease-in-out; }
 .circular-progress-text { z-index: 1; }
 
-/* --- Timeline --- */
+/* Timeline */
 .roadmap-timeline { position: relative; margin-left: 30px; }
-.milestone { display: flex; position: relative; margin-bottom: 2rem; align-items: flex-start; transition: filter 0.3s ease, opacity 0.3s ease; } /* Added transition */
-
-/* --- *** NEW: Locked Milestone Styling *** --- */
-.milestone.locked {
-    filter: blur(2px) grayscale(50%); /* Blur and desaturate */
-    opacity: 0.6;
-    pointer-events: none; /* Disable interactions */
-}
-.milestone.locked .milestone-details {
-    background-color: color-mix(in srgb, var(--card-bg-color) 70%, black); /* Darken card */
-}
-/* --- *** END NEW *** --- */
-
+.milestone { display: flex; position: relative; margin-bottom: 2rem; align-items: flex-start; transition: filter 0.3s ease, opacity 0.3s ease; }
+.milestone.locked { filter: grayscale(60%); opacity: 0.5; pointer-events: none; }
+.milestone.locked .milestone-details { background-color: color-mix(in srgb, var(--card-bg-color) 80%, black); }
 .milestone-marker-container { position: absolute; left: -45px; top: 0; display: flex; flex-direction: column; align-items: center; height: calc(100% + 2rem); }
 .milestone-marker { width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color); border: 3px solid var(--bg-color); box-shadow: 0 0 0 3px var(--primary-color); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: white; z-index: 1; transition: background-color 0.5s ease, box-shadow 0.5s ease; }
 .milestone-marker.complete { background-color: var(--success-color); box-shadow: 0 0 0 3px var(--success-color); color: #1a1a2e; }
-/* Marker when locked */
 .milestone.locked .milestone-marker { background-color: var(--incomplete-color); box-shadow: 0 0 0 3px var(--incomplete-color); }
-
 .milestone-line { width: 3px; background-color: var(--line-color); flex-grow: 1; margin-top: 5px; transition: background-color 0.5s ease; }
 .roadmap-timeline > .milestone:last-of-type .milestone-line { flex-grow: 0; height: 20px; }
 .end-marker { position: absolute; bottom: -2rem; left: -45px; }
@@ -71,55 +56,44 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 .milestone-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
 .milestone-progress { width: 150px; margin-left: 1rem; }
 
-/* --- Topic --- */
+/* Locked Overlay */
+.locked-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(42, 42, 62, 0.7); display: flex; justify-content: center; align-items: center; color: var(--heading-color); font-size: 1rem; font-weight: 500; text-align: center; padding: 1rem; z-index: 5; border-radius: 8px; backdrop-filter: blur(2px); }
+.locked-overlay svg { margin-right: 0.5rem; color: var(--primary-color); font-size: 1.2em; }
+
+/* Topic */
 .topic-container { margin-bottom: 1rem; border-left: 3px solid var(--line-color); padding-left: 1rem; position: relative; transition: opacity 0.3s ease; }
-/* --- *** NEW: Locked Topic Styling *** --- */
+.topic-container:last-child { margin-bottom: 0.5rem; }
 .topic-container.locked { opacity: 0.6; }
 .topic-container.locked .topic-header { cursor: not-allowed; }
-.topic-container.locked h4 { color: var(--note-text-color); } /* Fade title */
-/* --- *** END NEW *** --- */
-
+.topic-container.locked h4 { color: var(--note-text-color); }
 .topic-header { display: flex; align-items: center; cursor: pointer; margin-bottom: 0.5rem; padding: 0.25rem 0; }
 .collapse-icon { color: var(--note-text-color); font-size: 0.9rem; transition: transform 0.2s ease-in-out; }
 .topic-header:hover .collapse-icon, .topic-header:hover h4 { color: var(--primary-color); }
-/* Don't change color on hover if locked */
-.topic-container.locked .topic-header:hover .collapse-icon,
-.topic-container.locked .topic-header:hover h4 { color: initial; }
+.topic-container.locked .topic-header:hover .collapse-icon, .topic-container.locked .topic-header:hover h4 { color: inherit; }
+.topic-progress { width: 100px; margin-left: 0.5rem; }
 
-.topic-progress { width: 100px; margin-left: auto; }
-
-/* --- Task List --- */
+/* Task List */
 .task-list { list-style: none; padding-left: 10px; margin-top: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
 
-/* --- Task Item --- */
+/* Task Item */
 .task-item { padding: 0.8rem 0.5rem; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.5rem; opacity: 0.8; transition: background-color 0.3s ease, opacity 0.3s ease, text-decoration 0.3s ease; position: relative; }
 .task-item:last-child { border-bottom: none; }
 .task-item:not(.completed) { opacity: 1; }
 .task-item.completed { opacity: 0.7; }
-/* --- *** NEW: Locked Task Styling *** --- */
 .task-item.locked { opacity: 0.5; }
 .task-item.locked .task-description { color: var(--note-text-color); }
-.task-item.locked .task-status-icon,
-.task-item.locked .task-actions,
-.task-item.locked .mentor-notes {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-.task-item.locked .task-status-icon:hover { transform: none; } /* Disable hover effect */
-.task-item.locked .icon-btn:hover { color: var(--note-text-color); } /* Disable hover color */
-
-/* --- *** END NEW *** --- */
-
+.task-item.locked .task-status-icon, .task-item.locked .task-actions, .task-item.locked .mentor-notes, .task-item.locked .resource-section { cursor: not-allowed; opacity: 0.5; pointer-events: none; }
+.task-item.locked .task-status-icon:hover { transform: none; }
+.task-item.locked .icon-btn:hover { color: var(--note-text-color); }
 .task-content { display: flex; align-items: center; gap: 0.75rem; }
 .task-status-icon { font-size: 1.4rem; cursor: pointer; user-select: none; transition: transform 0.2s ease, color 0.3s ease; display: flex; align-items: center; }
-.task-status-icon.disabled { cursor: not-allowed; } /* Style disabled icon */
-.task-status-icon:hover:not(.disabled) { transform: scale(1.15); } /* Only scale if not disabled */
+.task-status-icon.disabled { cursor: not-allowed; }
+.task-status-icon:hover:not(.disabled) { transform: scale(1.15); }
 .icon-complete { color: var(--success-color); }
 .icon-incomplete { color: var(--incomplete-color); }
 .task-description { flex-grow: 1; color: var(--text-color); transition: color 0.3s ease, text-decoration 0.3s ease; }
 .task-item.completed .task-description { text-decoration: line-through solid var(--note-text-color) 1px; color: var(--note-text-color); }
 .task-actions { margin-left: auto; display: flex; align-items: center; gap: 0.25rem; }
-.task-actions.disabled { pointer-events: none; } /* Disable buttons if actions disabled */
 .icon-btn { background: none; border: none; color: var(--note-text-color); cursor: pointer; font-size: 1rem; padding: 3px; display: inline-flex; align-items: center; transition: color 0.2s ease; }
 .icon-btn:disabled { cursor: not-allowed; opacity: 0.5; }
 .icon-btn:hover:not(:disabled) { color: var(--primary-color); }
@@ -134,7 +108,6 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 
 /* Mentor Notes */
 .mentor-notes { margin-left: calc(1.4rem + 0.75rem); margin-top: 5px; font-size: 0.9rem; color: var(--note-text-color); background-color: var(--note-bg-color); padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); }
-.mentor-notes.disabled { opacity: 0.5; pointer-events: none; }
 .notes-display { display: flex; align-items: center; gap: 0.5rem; }
 .notes-text { margin: 0; flex-grow: 1; display: flex; align-items: center; gap: 0.3rem; }
 .notes-text em { color: var(--secondary-color); font-style: normal; font-weight: 500; }
@@ -156,8 +129,10 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 
 /* Add Item Button */
 .add-item-btn { display: flex; align-items: center; gap: 0.4rem; background-color: transparent; color: var(--secondary-color); border: 1px dashed var(--secondary-color); padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 0.75rem; margin-left: 10px; transition: background-color 0.2s ease, color 0.2s ease; }
-.add-item-btn:hover { background-color: var(--secondary-color); color: white; }
+.add-item-btn:hover:not(:disabled) { background-color: var(--secondary-color); color: white; }
+.add-item-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--incomplete-color); color: var(--incomplete-color); }
 .add-item-btn svg { font-size: 0.9em; }
+.add-topic-btn { margin-left: 0; margin-top: 1rem; }
 
 /* Milestone Actions & Schedule Button */
 .milestone-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: right; }
@@ -165,53 +140,16 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 .schedule-test-btn:hover { background-color: color-mix(in srgb, var(--success-color) 85%, black); transform: translateY(-1px); }
 .schedule-test-btn svg { font-size: 1em; }
 
-/* --- *** NEW: Mentor Score Input Styles *** --- */
-.mentor-score-input {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.mentor-score-input label {
-    font-weight: 500;
-    color: var(--note-text-color);
-    font-size: 0.9rem;
-}
-.mentor-score-input input[type="number"] {
-    width: 70px; /* Fixed width for score input */
-    padding: 4px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 0.95rem;
-    text-align: center;
-}
-/* Hide number spinners */
-.mentor-score-input input[type=number]::-webkit-inner-spin-button,
-.mentor-score-input input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.mentor-score-input input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
-}
+/* Mentor Score Input */
+.mentor-score-input { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; }
+.mentor-score-input label { font-weight: 500; color: var(--note-text-color); font-size: 0.9rem; }
+.mentor-score-input input[type="number"] { width: 70px; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--bg-color); color: var(--text-color); font-size: 0.95rem; text-align: center; }
+.mentor-score-input input[type=number]::-webkit-inner-spin-button, .mentor-score-input input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.mentor-score-input input[type=number] { -moz-appearance: textfield; }
+.save-score-btn { /* Uses .icon-btn styles */ }
+.saved-score { font-size: 0.85rem; color: var(--success-color); margin-left: 0.5rem; font-style: italic; }
 
-.save-score-btn {
-    /* Uses .icon-btn styles */
-}
-.saved-score {
-    font-size: 0.85rem;
-    color: var(--success-color);
-    margin-left: 0.5rem;
-    font-style: italic;
-}
-/* --- *** END NEW *** --- */
-
-
-/* --- Quiz Modal Styles --- */
+/* Quiz Modal */
 .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .quiz-modal { background-color: var(--card-bg-color); padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
 .quiz-modal h2, .quiz-modal h3 { color: var(--heading-color); margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
@@ -233,18 +171,123 @@ h4 { color: var(--text-color); margin: 0; font-weight: 600; flex-grow: 1; paddin
 .quiz-results .result-message.passed { color: var(--success-color); }
 .quiz-results .result-message.failed { color: var(--danger-color); }
 
-/* --- *** NEW: Topic Locked Indicator *** --- */
-.topic-locked-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.75rem;
-    color: var(--incomplete-color);
-    margin-left: calc(1.4rem + 0.75rem); /* Align with notes */
-    margin-top: -0.25rem; /* Adjust vertical position */
-    font-style: italic;
+/* Topic Locked Indicator */
+.topic-locked-indicator { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; color: var(--incomplete-color); margin-left: calc(1.4rem + 0.75rem); margin-top: -0.25rem; font-style: italic; }
+.topic-locked-indicator svg { font-size: 0.8em; }
+
+/* Delete Topic Button */
+.delete-topic-btn { color: var(--danger-color); margin-left: 0.5rem; font-size: 0.9rem; }
+.delete-topic-btn:hover:not(:disabled) { color: var(--danger-dark-color); }
+
+
+/* --- *** NEW: Resource Section Styles *** --- */
+.resource-section {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-color); /* Separator */
+    margin-left: calc(1.4rem + 0.75rem); /* Indent like notes */
 }
-.topic-locked-indicator svg {
-    font-size: 0.8em;
+.resource-section.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.resource-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.resource-item {
+    font-size: 0.9rem;
+}
+.resource-item.disabled { /* Already handled by parent .resource-section */ }
+
+.resource-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resource-icon {
+    color: var(--secondary-color); /* Purple icon */
+    font-size: 0.9em;
+    flex-shrink: 0; /* Prevent icon shrinking */
+}
+
+.resource-display a {
+    color: var(--primary-color); /* Blue link */
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Ellipsis for long titles */
+    flex-grow: 1; /* Allow link to take space */
+}
+.resource-display a:hover {
+    text-decoration: underline;
+}
+
+.edit-resource-btn, .delete-resource-btn {
+    /* Uses .icon-btn base styles */
+    font-size: 0.9rem; /* Slightly smaller */
+    margin-left: 0.25rem;
+}
+.delete-resource-btn {
+    color: var(--danger-color);
+}
+.delete-resource-btn:hover:not(:disabled) {
+    color: var(--danger-dark-color);
+}
+
+.add-resource-form {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--note-bg-color); /* Use note background */
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.add-resource-form h5 { margin: 0 0 0.5rem 0; }
+
+.resource-input {
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+.resource-input.title {
+    /* Optional: Specific styles for title input */
+}
+.resource-input.url {
+    /* Optional: Specific styles for URL input */
+}
+
+.resource-edit-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.resource-edit-form .resource-input.title { width: 35%; }
+.resource-edit-form .resource-input.url { width: 45%; }
+.save-resource-btn, .cancel-resource-btn {
+     /* Uses .icon-btn base styles */
+     margin-left: auto; /* Push buttons right */
+}
+.save-resource-btn { color: var(--success-color); }
+.cancel-resource-btn { color: var(--danger-color); }
+
+.add-resource-btn {
+    /* Uses .add-item-btn base styles */
+    margin-left: 0; /* No extra indent */
+    margin-top: 0.5rem;
 }
 /* --- *** END NEW *** --- */

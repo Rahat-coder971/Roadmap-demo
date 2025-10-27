@@ -2,70 +2,45 @@
 import React, { useState } from 'react';
 import TaskItem from './TaskItem';
 import ProgressBar from './ProgressBar';
-import { isTopicComplete, calculateProgress } from '../services/roadmapService'; // Import topic completion check
-import { FaChevronDown, FaChevronRight, FaPlusCircle, FaLock } from 'react-icons/fa'; // Added FaLock
+import { isTopicComplete, calculateProgress } from '../services/roadmapService';
+import { FaChevronDown, FaChevronRight, FaPlusCircle, FaLock, FaTrashAlt } from 'react-icons/fa';
 
-// *** UPDATED: Added isLocked prop ***
-function Topic({ topic, milestoneId, onUpdateTask, onAddTask, onDeleteTask, role, onTriggerQuiz, isLocked }) {
-  const [isCollapsed, setIsCollapsed] = useState(true); // Default to collapsed
-
+// *** UPDATED: Added resource handlers ***
+function Topic({ topic, milestoneId, role, isLocked, onUpdateTask, onAddTask, onDeleteTask, onTriggerQuiz, onDeleteTopic, onAddResource, onUpdateResource, onDeleteResource }) {
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const progress = calculateProgress(topic.tasks);
-  const complete = isTopicComplete(topic); // Use helper
-
-  const toggleCollapse = () => {
-    // Prevent toggling if the topic is locked (unless it's already complete)
-    if (isLocked && !complete) return;
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const handleAddTask = (e) => { /* ... unchanged ... */
-      e.stopPropagation();
-      if (role === 'mentor') onAddTask(milestoneId, topic.id);
-  }
+  const complete = isTopicComplete(topic);
+  const toggleCollapse = () => { if (isLocked && !complete) return; setIsCollapsed(!isCollapsed); };
+  const handleAddTask = (e) => { e.stopPropagation(); if (role === 'mentor' && !isLocked) onAddTask(milestoneId, topic.id); }
+  const handleDelete = (e) => { e.stopPropagation(); if (role === 'mentor' && !isLocked && window.confirm(`Delete topic "${topic.title}"?`)) { onDeleteTopic(milestoneId, topic.id); } }
 
   return (
-    // *** UPDATED: Add 'locked' class ***
     <div className={`topic-container ${isLocked && !complete ? 'locked' : ''}`}>
       <div className="topic-header" onClick={toggleCollapse} title={isLocked && !complete ? "Complete previous topic first" : `Click to ${isCollapsed ? 'expand' : 'collapse'}`}>
-        <span className="collapse-icon">
-          {/* Show lock instead of chevron if locked */}
-          {isLocked && !complete ? <FaLock /> : (isCollapsed ? <FaChevronRight /> : <FaChevronDown />)}
-        </span>
+        <span className="collapse-icon"> {isLocked && !complete ? <FaLock /> : (isCollapsed ? <FaChevronRight /> : <FaChevronDown />)} </span>
         <h4>{topic.title}</h4>
-        <div className="topic-progress">
-             <ProgressBar percentage={progress} />
-        </div>
+        {role === 'mentor' && !isLocked && ( <button onClick={handleDelete} className="icon-btn delete-topic-btn" title="Delete Topic"> <FaTrashAlt /> </button> )}
+        <div className="topic-progress"> <ProgressBar percentage={progress} /> </div>
       </div>
 
-      {/* Conditionally render task list based on collapse state AND locked status */}
-      {!isCollapsed && (!isLocked || complete) && ( // Only show if not collapsed AND (not locked OR already complete)
+      {!isCollapsed && (!isLocked || complete) && (
         <>
             <ul className="task-list">
             {(topic.tasks || []).map((task, index, arr) => (
                 <TaskItem
-                    key={task.id}
-                    task={task}
-                    milestoneId={milestoneId}
-                    topicId={topic.id}
-                    onUpdateTask={onUpdateTask}
-                    onDeleteTask={onDeleteTask}
-                    role={role}
-                    isLastTask={index === arr.length - 1}
-                    isTopicComplete={complete}
-                    onTriggerQuiz={onTriggerQuiz}
-                    isTopicLocked={isLocked && !complete} // Pass locked status to task
+                    key={task.id} task={task} milestoneId={milestoneId} topicId={topic.id} role={role}
+                    isLastTask={index === arr.length - 1} isTopicComplete={complete} isTopicLocked={isLocked && !complete}
+                    onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} onTriggerQuiz={onTriggerQuiz}
+                    onAddResource={onAddResource} // Pass down
+                    onUpdateResource={onUpdateResource} // Pass down
+                    onDeleteResource={onDeleteResource} // Pass down
                 />
             ))}
             </ul>
-            {role === 'mentor' && (
-                <button onClick={handleAddTask} className="add-item-btn add-task-btn">
-                    <FaPlusCircle /> Add Task
-                </button>
-            )}
+            {role === 'mentor' && !isLocked && ( <button onClick={handleAddTask} className="add-item-btn add-task-btn"> <FaPlusCircle /> Add Task </button> )}
         </>
       )}
     </div>
   );
 }
-
 export default Topic;
